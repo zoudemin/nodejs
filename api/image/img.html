@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>img...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<input type="file" id="file">
+<button id="button">上传图片</button>
+<img src="" id='img' alt="">
+<script>
+    $('#button').click(()=>{
+        let data = new FormData();
+        data.append('avatar',$('#file')[0].files[0]);
+            $.ajax({  
+            url: 'http://localhost:3000/food/upload',  
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  //不处理发送的数据，因为data值是FormData对象，不需要对数据做处理 
+            contentType: false   //不设置Content-type请求头
+        }).done(function(ret){  
+           console.log(ret);
+           $('#img').attr('src','http://localhost:3000'+ret.msg.url)
+        });
+    })
+</script>
+</body>
+</html>
