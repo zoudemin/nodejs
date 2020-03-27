@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const User = require('../project/mongoo.js');
 const nodemailer = require('../db/nodemailer.js');
-let code = parseInt(Math.random()*100000);
+const JWT = require('../api/websocket/token.js');
+let code = parseInt(Math.random()*1000000);
 
 /**
  * @api {post} /user/login 用户登录
@@ -20,16 +21,19 @@ router.post('/login',(req,res)=>{
     const {us,ps,codes} = req.body;
     if(us&&ps&&codes&&codes==code){
         User.find({us,ps}).then((val)=>{
-            res.send({state:200,res:val.length>0?val:'无用户数据'});
+            // req.session.login = true;
+            // req.session.name = us;
+            let token = JWT.creatToken({login:true,name:us});
+            console.log(token)
+            res.send({state:200,res:val.length>0?val:'无用户数据',token});
             code = parseInt(Math.random()*1000000);
         }).catch((err)=>{
             res.send({state:200,res:err});
         })
     }else{
         codes&&codes!==code?res.send({state:200,res:'验证码错误'}):res.send({state:200,res:'失败'});
-        code = parseInt(Math.random()*100000);
+        code = parseInt(Math.random()*1000000);
     }
-    console.log(req.body.us)
 })
 /**
  * @api {post} /user/reg 用户注册
@@ -47,7 +51,7 @@ router.post('/reg',(req,res)=>{
     const {us,ps,codes} = req.body;
     if(us&&ps&&codes&&codes==code){
         User.find({us,ps}).then((val)=>{
-            code = parseInt(Math.random()*100000);
+            code = parseInt(Math.random()*1000000);
             if(val.length>0){
                 throw new Error('用户已存在')
             }else{
@@ -58,11 +62,11 @@ router.post('/reg',(req,res)=>{
             res.send({state:200,res:'注册成功'});
         }).catch((err)=>{
             res.send({state:200,res:err});
-            code = parseInt(Math.random()*100000);
+            code = parseInt(Math.random()*1000000);
         })
     }else{
         codes&&codes!==code?res.send({state:200,res:'验证码错误'}):res.send({state:200,res:'失败'});
-        code = parseInt(Math.random()*100000);
+        code = parseInt(Math.random()*1000000);
     }
     console.log(req.body.us)
 })
@@ -100,7 +104,7 @@ router.post('/reg',(req,res)=>{
 router.post('/usermailer',(req,res)=>{
     const {mail} = req.body;
     if(/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(mail)){
-        code = parseInt(Math.random()*100000);
+        code = parseInt(Math.random()*1000000);
         nodemailer({
             from: '"zoudemin" <zoudemin@uinnova.com>',
             to: mail,

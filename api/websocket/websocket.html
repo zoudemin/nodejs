@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>img...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<button id="button" onclick="websocket(event)">WebSocket测试</button>
+<script>
+    const ws = new WebSocket('ws://localhost:8080/');
+    ws.onopen=function(){
+        console.log('服务器已连接！');
+    }
+
+    ws.onmessage=(msg)=>{
+        console.log('来自服务器端的数据'+msg);
+        console.log(msg);
+    }
+
+    ws.onclose=(msg)=>{
+        console.log('服务器端主动断开连接！'+msg);
+    }
+
+    function websocket(e) {
+        ws.send('websocket测试'+e)
+    }
+</script>
+</body>
+</html>

@@ -246,7 +246,9 @@ router.post('/update',(req,res)=>{
  */
 router.post('/getInfo',(req,res)=>{
     const {pageSize=5, page=1} = req.body;
-    Food.find().limit(Number(pageSize)).skip(Number((page-1)*pageSize)).then((data)=>{
+    const {val} = req.body;
+    let reg = new RegExp(val);
+    Food.find({$or:[{name:{$regex:reg}},{desc:{$regex:reg}}]}).limit(Number(pageSize)).skip(Number((page-1)*pageSize)).then((data)=>{
         res.send({err:0,state:200,msg:data})
     }).catch((err)=>{
         res.send({err,state:200,msg:'分页查询失败'})
